@@ -1,0 +1,206 @@
+" Pathogen setup
+call pathogen#incubate()
+call pathogen#helptags()
+
+" Misc
+set nocompatible
+set showcmd
+set hidden
+set wildmenu
+set scrolloff=5
+set mouse=a
+syn on
+set encoding=utf-8
+set number
+set ruler
+set cursorline
+set nobackup
+set hlsearch
+set incsearch
+let mapleader = ","
+
+" Set 256 colors in terminal
+set t_Co=256
+
+filetype plugin on
+filetype indent on
+
+" Theme
+set background=dark
+"colorscheme wombat256
+let g:molokai_original=1
+colorscheme molokai
+
+" Automatically reload vimrc when it's saved
+augroup AutoReloadVimRC
+  au!
+  au BufWritePost $MYVIMRC so $MYVIMRC
+  au BufWritePost .gvimrc so .gvimrc
+augroup END
+
+" Re-select visual block after indent/outdent
+vnoremap < <gv
+vnoremap > >gv
+
+" Clear search highlights
+noremap <silent><space> :set hlsearch! hlsearch?<CR>
+
+" Select all
+map <leader>a ggVG
+
+" Make undo work after VIM restarts
+if exists("+undofile")
+  " undofile - This allows you to use undos after exiting and restarting
+  " This, like swap and backups, uses .vim-undo first, then ~/.vim/undo
+  " :help undo-persistence
+  " This is only present in 7.3+
+  if isdirectory($HOME . '/.vim/undo') == 0
+    :silent !mkdir -p ~/.vim/undo > /dev/null 2>&1
+  endif
+  set undodir=./.vim-undo//
+  set undodir+=~/.vim/undo//
+  set undofile
+endif
+
+" Resize splits when window is resized
+au VimResized * exe "normal! \<c-w>="
+
+" Code folding
+set foldmethod=indent
+set foldnestmax=10
+set nofoldenable
+set foldlevel=1
+
+" Hide the toolbar
+set guioptions-=T
+
+" Make :find work in subdirectories
+set path=.**
+
+" Retab and reformat without loosing cursor position
+map <leader>r mz<bar>:retab!<bar>:normal gg=G<cr>`z
+
+" join lines with cursor staying in place
+nnoremap J mzJ`z
+
+" Markdown colors for normal text
+autocmd FileType text set filetype=markdown
+
+" override some highlight settings (turn off stupid italics in Molokai)
+highlight ColorColumn  ctermbg=235 guibg=#2c2d27
+highlight CursorLine   ctermbg=235 guibg=#2c2d27
+highlight CursorColumn ctermbg=235 guibg=#2c2d27
+highlight DiffText     gui=none
+highlight Macro        gui=none
+highlight SpecialKey   gui=none
+highlight Special      gui=none
+highlight StorageClass gui=none
+highlight Tag          gui=none
+
+" 80 character line coloring
+if exists("+colorcolumn")
+  let &colorcolumn=join(range(81,256),",")
+else
+  au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>81v.\+', -1)
+endif
+
+" Easier increment/decrement
+nnoremap + <C-a>
+nnoremap - <C-x>
+
+" Show current file in NERDTree
+map <silent> <C-s> :NERDTree<CR><C-w>p:NERDTreeFind<CR>
+
+" Spellcheck Git commit messages
+autocmd BufRead COMMIT_EDITMSG setlocal spell!
+
+" Show Git diff in window split when committing
+autocmd FileType gitcommit DiffGitCached | wincmd p
+
+" Find merge conflict markers
+nmap <silent> <leader>cf <ESC>/\v^[<=>]{7}( .*\|$)<CR>
+
+" Better TAB completion for files
+if has("wildmenu")
+  set wildmenu
+  set wildmode=longest,list
+  " Ignore stuff (for TAB autocompletion)
+  set wildignore+=*.a,*.o,*.obj,*.so
+  set wildignore+=*.py[co]
+  set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png
+  set wildignore+=.DS_Store,.git,.hg,.svn
+  set wildignore+=*~,*.swp,*.tmp
+endif
+
+" Remap U to <C-r> for easier redo
+noremap U <C-r>
+
+" Indentation and tabs
+set autoindent smartindent
+set expandtab smarttab shiftwidth=2 softtabstop=2
+set showmatch
+
+" Powerline
+if !exists("b:powerline_enabled")
+  set rtp+=/home/tasiraj/.local/lib/python2.7/site-packages/powerline/bindings/vim
+  set laststatus=2
+  let b:powerline_enabled = 1
+endif
+
+" Show whitespace at the end of the lines
+function! ShowWhitespace()
+  " Highlight color
+  highlight WhitespaceEOL ctermbg=DarkYellow guibg=DarkYellow
+
+  " Whitespace at the end of a line. This little dance suppresses whitespaces
+  " that has just been typed.
+  match WhitespaceEOL /\s\+$/
+  au BufWinEnter * match WhitespaceEOL /\s\+$/
+  au InsertEnter * match WhitespaceEOL /\s\+\%#\@<!$/
+  au InsertLeave * match WhitespaceEOL /\s\+$/
+  au BufWinLeave * call clearmatches()
+  let b:show_whitespace = 1
+endfunction
+"nmap <silent> <C-B> :call ShowWhitespace()<CR>
+
+function! HideWhitespaces()
+  call clearmatches()
+  if exists("b:show_whitespace")
+    unlet b:show_whitespace
+  endif
+endfunction
+"nmap <silent> <C-B> :call HideWhitespaces()<CR>
+
+function! ToggleWhitespaces()
+  if exists("b:show_whitespace")
+    call HideWhitespaces()
+  else
+    call ShowWhitespace()
+  endif
+endfunction
+
+call ShowWhitespace()
+
+" Syntax highlight LLVM files
+augroup filetype
+  au! BufRead,BufNewFile *.ll set filetype=llvm
+  au! BufRead,BufNewFile *.td set filetype=tablegen
+  au! BufRead,BufNewFile *Makefile* set filetype=make
+augroup END
+
+" clang complete
+let g:clang_auto_select=1
+let g:clang_complete_copen=0
+let g:clang_periodic_quickfix=1
+let g:clang_snippets=1
+let g:clang_close_preview=1
+let g:clang_user_options='-std=c++11'
+let g:clang_use_library=1
+let g:clang_library_path='/opt/clang/lib/'
+let g:clang_complete_macros=1
+let g:clang_complete_patterns=1
+
+" Clang format
+map <leader><C-i> :pyf /opt/clang/bin/clang-format.py<CR>
+imap <leader><C-i> <ESC>:pyf /opt/clang/bin/clang-format.py<CR>
+
