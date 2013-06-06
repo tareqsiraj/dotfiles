@@ -8,16 +8,26 @@ set showcmd
 set hidden
 set wildmenu
 set scrolloff=5
-set mouse=a
+set mouse=v
 syn on
 set encoding=utf-8
 set number
 set ruler
-set cursorline
 set nobackup
 set hlsearch
 set incsearch
 let mapleader = ","
+
+" Highlight current line and column
+if has("gui_running")
+  au WinLeave * set nocursorline nocursorcolumn
+  au WinEnter * set cursorline cursorcolumn
+  set cursorline cursorcolumn
+else
+  au WinLeave * set nocursorline
+  au WinEnter * set cursorline
+  set cursorline
+endif
 
 " Set 256 colors in terminal
 set t_Co=256
@@ -147,6 +157,9 @@ if !exists("b:powerline_enabled")
   let b:powerline_enabled = 1
 endif
 
+" CtrlP
+set rtp^=~/.vim/bundle/ctrlp
+
 " Show whitespace at the end of the lines
 function! ShowWhitespace()
   " Highlight color
@@ -189,8 +202,11 @@ augroup filetype
 augroup END
 
 " clang complete
+set completeopt=menu,menuone
+set pumheight=20
 let g:clang_auto_select=1
-let g:clang_complete_copen=0
+let g:clang_complete_copen=1
+let g:clang_hl_errors=0
 let g:clang_periodic_quickfix=1
 let g:clang_snippets=1
 let g:clang_close_preview=1
@@ -204,3 +220,8 @@ let g:clang_complete_patterns=1
 map <leader><C-i> :pyf /opt/clang/bin/clang-format.py<CR>
 imap <leader><C-i> <ESC>:pyf /opt/clang/bin/clang-format.py<CR>
 
+" Use <C-Arrow> keys to navigate between tabs
+map <C-Right> :tabnext<CR>
+imap <C-Right> :tabnext<CR>
+map <C-Left> :tabprevious<CR>
+imap <C-Left> :tabprevious<CR>
