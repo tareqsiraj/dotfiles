@@ -150,13 +150,6 @@ set autoindent smartindent
 set expandtab smarttab shiftwidth=2 softtabstop=2
 set showmatch
 
-" Powerline
-if !exists("b:powerline_enabled")
-  set rtp+=/home/tasiraj/.local/lib/python2.7/site-packages/powerline/bindings/vim
-  set laststatus=2
-  let b:powerline_enabled = 1
-endif
-
 " CtrlP
 set rtp^=~/.vim/bundle/ctrlp
 
@@ -225,3 +218,6 @@ map <C-Right> :tabnext<CR>
 imap <C-Right> :tabnext<CR>
 map <C-Left> :tabprevious<CR>
 imap <C-Left> :tabprevious<CR>
+
+" Vim-airline workaround to show airline when only one file is open
+set laststatus=2
