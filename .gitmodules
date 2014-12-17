@@ -3,7 +3,7 @@
 	url = http://github.com/tpope/vim-fugitive.git
 [submodule "vim/bundle/colorschemes"]
 	path = vim/bundle/colorschemes
-	url = git@github.com:flazz/vim-colorschemes.git
+	url = git://github.com/flazz/vim-colorschemes
 [submodule "vim/bundle/clang_complete"]
 	path = vim/bundle/clang_complete
 	url = git://github.com/Rip-Rip/clang_complete
