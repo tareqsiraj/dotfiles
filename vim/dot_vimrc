@@ -1,6 +1,22 @@
-" Pathogen setup
-call pathogen#incubate()
-call pathogen#helptags()
+" vim-plug setup
+call plug#begin('~/.config/nvim/plugged')
+Plug 'flazz/vim-colorschemes'
+Plug 'scrooloose/nerdtree'
+Plug 'kien/rainbow_parentheses.vim'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'rking/ag.vim'
+Plug 'morhetz/gruvbox'
+Plug 'bling/vim-airline'
+"Plug 'justmao945/vim-clang'
+Plug 'gregsexton/gitv'
+Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'mhartington/oceanic-next'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+"Plug 'bling/vim-bufferline'
+call plug#end()
 
 " Misc
 set nocompatible
@@ -8,7 +24,7 @@ set showcmd
 set hidden
 set wildmenu
 set scrolloff=5
-set mouse=v
+set mouse=a
 syn on
 set encoding=utf-8
 set number
@@ -23,6 +39,9 @@ if has("gui_running")
   au WinLeave * set nocursorline nocursorcolumn
   au WinEnter * set cursorline cursorcolumn
   set cursorline cursorcolumn
+  "set guifont=Source\ Code\ Pro:h13
+  "set guifont=DejaVu\ Sans\ Mono:h13
+  set guifont=Monaco:h13
 else
   au WinLeave * set nocursorline
   au WinEnter * set cursorline
@@ -37,9 +56,9 @@ filetype indent on
 
 " Theme
 set background=dark
-"colorscheme wombat256
-let g:molokai_original=1
-colorscheme molokai
+"let g:molokai_original=1
+"colorscheme molokai
+colorscheme OceanicNext
 
 " Automatically reload vimrc when it's saved
 augroup AutoReloadVimRC
@@ -109,7 +128,7 @@ highlight Tag          gui=none
 
 " 80 character line coloring
 if exists("+colorcolumn")
-  let &colorcolumn=join(range(81,256),",")
+  let &colorcolumn=join(range(120,256),",")
 else
   au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>81v.\+', -1)
 endif
@@ -147,7 +166,7 @@ noremap U <C-r>
 
 " Indentation and tabs
 set autoindent smartindent
-set expandtab smarttab shiftwidth=2 softtabstop=2
+set expandtab smarttab shiftwidth=4 softtabstop=4
 set showmatch
 
 " CtrlP
@@ -194,24 +213,40 @@ augroup filetype
   au! BufRead,BufNewFile *Makefile* set filetype=make
 augroup END
 
+" Rainbow parentheses
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+
 " clang complete
-set completeopt=menu,menuone
-set pumheight=20
-let g:clang_auto_select=1
-let g:clang_complete_copen=1
-let g:clang_hl_errors=0
-let g:clang_periodic_quickfix=1
-let g:clang_snippets=1
-let g:clang_close_preview=1
-let g:clang_user_options='-std=c++11'
-let g:clang_use_library=1
-let g:clang_library_path='/opt/clang/lib/'
-let g:clang_complete_macros=1
-let g:clang_complete_patterns=1
+"set completeopt=menu,menuone
+"set pumheight=20
+
+let g:clang_format_path='/Users/tareq.siraj/bin/clang-format'
+"let g:clang_cpp_options = '-std=c++1y -stdlib=libc++'
+"let g:clang_auto_select=1
+"let g:clang_complete_copen=1
+"let g:clang_hl_errors=0
+"let g:clang_periodic_quickfix=1
+"let g:clang_snippets=1
+"let g:clang_close_preview=1
+"let g:clang_user_options='-std=c++11'
+"let g:clang_use_library=1
+"let g:clang_complete_macros=1
+"let g:clang_complete_patterns=1
+"
+"if has("unix")
+"  let s:clang_library_path='/Library/Developer/CommandLineTools/usr/lib'
+"  "let s:clang_library_path='/opt/clang/lib'
+"  if isdirectory(s:clang_library_path)
+"    let g:clang_library_path=s:clang_library_path
+"  end
+"end
 
 " Clang format
-map <leader><C-i> :pyf /opt/clang/bin/clang-format.py<CR>
-imap <leader><C-i> <ESC>:pyf /opt/clang/bin/clang-format.py<CR>
+map <leader><C-i> :pyf ~/bin/clang-format.py<CR>
+imap <leader><C-i> <ESC>:pyf ~/bin/clang-format.py<CR>
 
 " Use <C-Arrow> keys to navigate between tabs
 map <C-Right> :tabnext<CR>
@@ -221,3 +256,27 @@ imap <C-Left> :tabprevious<CR>
 
 " Vim-airline workaround to show airline when only one file is open
 set laststatus=2
+
+" Shortcut to rapidly toggle `set list`
+nmap <leader>l :set list!<CR>
+
+" Use the same symbols as TextMate for tabstops and EOLs
+" set listchars=tab:▸\ ,space:⋅,eol:¬
+set listchars=tab:▸\ ,eol:¬
+
+"Invisible character colors
+highlight NonText guifg=#4a4a59
+highlight SpecialKey guifg=#4a4a59
+
+" Hide the scrollbars
+set guioptions-=r
+set guioptions-=L
+
+set backspace=indent,eol,start
+
+" Use ag for searching text in files
+"let g:ackprg = 'ag --vimgrep --smart-case'
+"cnoreabbrev ag Ack
+"cnoreabbrev aG Ack
+"cnoreabbrev Ag Ack
+"cnoreabbrev AG Ack
