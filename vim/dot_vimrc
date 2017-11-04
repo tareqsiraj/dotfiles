@@ -24,7 +24,6 @@ set showcmd
 set hidden
 set wildmenu
 set scrolloff=5
-set mouse=a
 syn on
 set encoding=utf-8
 set number
@@ -34,6 +33,16 @@ set hlsearch
 set incsearch
 let mapleader = ","
 
+" Enable mouse inside tmux
+" https://superuser.com/questions/549930/cant-resize-vim-splits-inside-tmux
+set mouse+=a
+if &term =~ '^screen'
+    " tmux knows the extended mouse mode.
+    set ttymouse=xterm2
+endif
+
+set background=dark
+
 " Highlight current line and column
 if has("gui_running")
   au WinLeave * set nocursorline nocursorcolumn
@@ -41,11 +50,13 @@ if has("gui_running")
   set cursorline cursorcolumn
   "set guifont=Source\ Code\ Pro:h13
   "set guifont=DejaVu\ Sans\ Mono:h13
-  set guifont=Monaco:h13
+  set guifont=Hack:h13
+  colorscheme OceanicNext
 else
   au WinLeave * set nocursorline
   au WinEnter * set cursorline
   set cursorline
+  colorscheme gruvbox
 endif
 
 " Set 256 colors in terminal
@@ -55,10 +66,8 @@ filetype plugin on
 filetype indent on
 
 " Theme
-set background=dark
 "let g:molokai_original=1
 "colorscheme molokai
-colorscheme OceanicNext
 
 " Automatically reload vimrc when it's saved
 augroup AutoReloadVimRC
@@ -116,21 +125,21 @@ nnoremap J mzJ`z
 autocmd FileType text set filetype=markdown
 
 " override some highlight settings (turn off stupid italics in Molokai)
-highlight ColorColumn  ctermbg=235 guibg=#2c2d27
-highlight CursorLine   ctermbg=235 guibg=#2c2d27
-highlight CursorColumn ctermbg=235 guibg=#2c2d27
-highlight DiffText     gui=none
-highlight Macro        gui=none
-highlight SpecialKey   gui=none
-highlight Special      gui=none
-highlight StorageClass gui=none
-highlight Tag          gui=none
+"highlight ColorColumn  ctermbg=235 guibg=#2c2d27
+"highlight CursorLine   ctermbg=235 guibg=#2c2d27
+"highlight CursorColumn ctermbg=235 guibg=#2c2d27
+"highlight DiffText     gui=none
+"highlight Macro        gui=none
+"highlight SpecialKey   gui=none
+"highlight Special      gui=none
+"highlight StorageClass gui=none
+"highlight Tag          gui=none
 
 " 80 character line coloring
 if exists("+colorcolumn")
-  let &colorcolumn=join(range(120,256),",")
+  let &colorcolumn=join(range(121,256),",")
 else
-  au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>81v.\+', -1)
+  au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>121v.\+', -1)
 endif
 
 " Easier increment/decrement
@@ -248,6 +257,30 @@ let g:clang_format_path='/Users/tareq.siraj/bin/clang-format'
 map <leader><C-i> :pyf ~/bin/clang-format.py<CR>
 imap <leader><C-i> <ESC>:pyf ~/bin/clang-format.py<CR>
 
+" FZF
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
+
+" This is the default extra key bindings
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+map <leader><C-p> :FZF<CR>
+imap <leader><C-p> <ESC>:FZF<CR>
+
 " Use <C-Arrow> keys to navigate between tabs
 map <C-Right> :tabnext<CR>
 imap <C-Right> :tabnext<CR>
@@ -274,7 +307,10 @@ set guioptions-=L
 
 set backspace=indent,eol,start
 
+set clipboard=unnamed
+
 " Use ag for searching text in files
+let g:ackprg = 'ag --vimgrep --smart-case'
 "let g:ackprg = 'ag --vimgrep --smart-case'
 "cnoreabbrev ag Ack
 "cnoreabbrev aG Ack
